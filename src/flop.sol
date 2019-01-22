@@ -63,6 +63,7 @@ contract Flopper is DSNote {
     uint256  public   beg = 1.05E27;  // 5% minimum bid increase
     uint48   public   ttl = 3 hours;  // 3 hours bid lifetime
     uint48   public   tau = 2 days;   // 2 days total auction length
+    uint256  public   amp = 10;       // Restart factor
     uint256  public kicks = 0;
 
     // --- Events ---
@@ -108,6 +109,14 @@ contract Flopper is DSNote {
 
         emit Kick(id, lot, bid, gal);
     }
+
+    function boot(uint id) public note {
+        require(bids[id].end < now);
+        require(bids[id].tic == 0);
+        bids[id].lot = uint(mul(bids[id].lot, amp));
+        bids[id].end = add(uint48(now), tau);
+    }
+    
     function dent(uint id, uint lot, uint bid) public note {
         require(bids[id].guy != address(0));
         require(bids[id].tic > now || bids[id].tic == 0);

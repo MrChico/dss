@@ -22,11 +22,16 @@ import "ds-note/note.sol";
 contract Fusspot {
     function kick(address gal, uint lot, uint bid) public returns (uint);
     function dai() public returns (address);
+    function gem() public returns (address);
 }
 
 contract Hopeful {
     function hope(address) public;
     function nope(address) public;
+}
+
+contract GemLike {
+    function totalSupply() public view returns (uint);
 }
 
 contract VatLike {
@@ -54,6 +59,7 @@ contract Vow is DSNote {
 
     uint256 public wait;  // flop delay
     uint256 public sump;  // flop fixed lot size
+    uint256 public part;  // gem supply, flop bid ratio
     uint256 public bump;  // flap fixed lot size
     uint256 public hump;  // surplus buffer
 
@@ -131,7 +137,7 @@ contract Vow is DSNote {
         require(Woe() >= sump);
         require(Joy() == 0);
         Ash = add(Ash, sump);
-        return Fusspot(row).kick(address(this), uint(-1), sump);
+        return Fusspot(row).kick(address(this), mul(GemLike(Fusspot(row).gem()).totalSupply(), part), sump);
     }
     // Surplus auction
     function flap() public returns (uint id) {
